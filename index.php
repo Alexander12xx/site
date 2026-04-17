@@ -35,14 +35,14 @@ $statsResult = $conn->query("SELECT
 $stats = $statsResult->fetch_assoc();
 
 // Free Open Source APIs Configuration
-$openExchangeAppId = 'YOUR_OPENEXCHANGE_APP_ID'; // Get from https://openexchangerates.org
-$weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.org/api
+$openExchangeAppId = 'YOUR_OPENEXCHANGE_APP_ID';
+$weatherApiKey = 'YOUR_OPENWEATHER_API_KEY';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Erick Phone Repair - Professional Phone Repair in Nairobi CBD</title>
     <meta name="description" content="Expert phone repair services in Nairobi CBD. iPhone, Samsung, screen replacement, battery service. Fast, reliable, affordable.">
     
@@ -52,39 +52,44 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- AOS Animation Library (Free Open Source) -->
+    <!-- AOS Animation Library -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     
-    <!-- Swiper.js Carousel (Free Open Source) -->
+    <!-- Swiper.js Carousel -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-    
-    <!-- Main CSS -->
-    <link rel="stylesheet" href="assets/css/modern-style.css">
     
     <style>
         /* Modern Design System */
         :root {
             --primary: #10b981;
             --primary-dark: #059669;
+            --primary-light: #34d399;
             --secondary: #3b82f6;
             --accent: #8b5cf6;
             --dark: #0f172a;
+            --darker: #020617;
             --light: #f8fafc;
             --gray: #64748b;
+            --gray-light: #94a3b8;
             --success: #22c55e;
             --warning: #f59e0b;
             --danger: #ef4444;
             --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --gradient-5: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --gradient-dark: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
             --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
             --radius-sm: 0.375rem;
             --radius-md: 0.75rem;
             --radius-lg: 1rem;
             --radius-xl: 1.5rem;
+            --radius-2xl: 2rem;
         }
 
         * {
@@ -93,41 +98,57 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: var(--light);
             color: var(--dark);
             line-height: 1.6;
+            overflow-x: hidden;
+            width: 100%;
         }
 
-        /* Modern Glassmorphism Navbar */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Navigation */
         .navbar {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s ease;
+            padding: 0.75rem 0;
         }
 
         .navbar.scrolled {
-            background: rgba(15, 23, 42, 0.9);
+            background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(20px);
+            padding: 0.5rem 0;
         }
 
         .navbar.scrolled .nav-link,
-        .navbar.scrolled .brand-text span {
+        .navbar.scrolled .brand-name {
             color: white;
         }
 
+        .navbar.scrolled .brand-sub {
+            color: var(--gray-light);
+        }
+
         .nav-container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 1rem 2rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -140,8 +161,8 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
         }
 
         .brand-icon {
-            width: 48px;
-            height: 48px;
+            width: 45px;
+            height: 45px;
             background: var(--gradient-1);
             border-radius: var(--radius-md);
             display: flex;
@@ -161,10 +182,11 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             font-size: 1.25rem;
             font-weight: 700;
             color: var(--dark);
+            line-height: 1.2;
         }
 
         .brand-sub {
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             color: var(--gray);
             font-weight: 500;
         }
@@ -180,6 +202,7 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             font-weight: 500;
             position: relative;
             padding: 0.5rem 0;
+            font-size: 0.95rem;
         }
 
         .nav-link::after {
@@ -197,39 +220,106 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             width: 100%;
         }
 
-        /* Modern Hero Section */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-quick-quote {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.625rem 1.25rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .btn-quick-quote:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .nav-toggle span {
+            width: 25px;
+            height: 2px;
+            background: var(--dark);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled .nav-toggle span {
+            background: white;
+        }
+
+        /* Enhanced Hero Section */
         .hero-section {
             min-height: 100vh;
             display: flex;
             align-items: center;
-            padding: 6rem 2rem 4rem;
-            background: radial-gradient(circle at 0% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 100% 50%, rgba(245, 87, 108, 0.1) 0%, transparent 50%);
+            padding: 6rem 0 4rem;
             position: relative;
             overflow: hidden;
+            background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
         }
 
-        .hero-section::before {
+        .hero-bg-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+        }
+
+        .hero-bg-animation::before {
             content: '';
             position: absolute;
             top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 100%;
-            background: var(--gradient-3);
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.1;
-            z-index: -1;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 30%, rgba(245, 87, 108, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 70%, rgba(79, 172, 254, 0.06) 0%, transparent 50%);
+            animation: bgMove 20s ease-in-out infinite;
+        }
+
+        @keyframes bgMove {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(2%, 1%) rotate(1deg); }
+            66% { transform: translate(-1%, 2%) rotate(-1deg); }
         }
 
         .hero-container {
-            max-width: 1280px;
-            margin: 0 auto;
+            position: relative;
+            z-index: 1;
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 3rem;
             align-items: center;
+        }
+
+        .hero-badge-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .hero-badge {
@@ -240,9 +330,10 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             color: var(--primary-dark);
             padding: 0.5rem 1rem;
             border-radius: 50px;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            margin-bottom: 1.5rem;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
         .badge-pulse {
@@ -253,102 +344,136 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             animation: pulse 2s infinite;
         }
 
+        .hero-badge.offer {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+
         @keyframes pulse {
             0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
+            50% { opacity: 0.4; transform: scale(1.3); }
         }
 
         .hero-title {
-            font-size: 3.5rem;
+            font-size: clamp(2.5rem, 5vw, 4rem);
             font-weight: 800;
-            line-height: 1.2;
+            line-height: 1.1;
             margin-bottom: 1.5rem;
         }
 
-        .title-highlight {
+        .title-main {
             display: block;
+        }
+
+        .title-highlight {
+            display: inline-block;
             background: var(--gradient-1);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            position: relative;
+        }
+
+        .title-highlight::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: var(--primary);
+            opacity: 0.2;
+            border-radius: 4px;
+            z-index: -1;
         }
 
         .hero-description {
-            font-size: 1.125rem;
+            font-size: clamp(1rem, 1.5vw, 1.125rem);
             color: var(--gray);
             margin-bottom: 2rem;
+            max-width: 540px;
         }
 
         .hero-stats {
             display: flex;
             gap: 2rem;
             margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
 
         .stat-item {
-            text-align: center;
+            display: flex;
+            flex-direction: column;
         }
 
         .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
+            font-size: 2.25rem;
+            font-weight: 800;
             color: var(--primary);
+            line-height: 1.2;
         }
 
         .stat-label {
             font-size: 0.875rem;
             color: var(--gray);
+            font-weight: 500;
         }
 
         .hero-cta {
             display: flex;
             gap: 1rem;
             margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
 
         .btn-primary {
             background: var(--primary);
             color: white;
             padding: 1rem 2rem;
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-lg);
             border: none;
             font-weight: 600;
+            font-size: 1rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
         }
 
         .btn-primary:hover {
             background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.35);
         }
 
         .btn-secondary {
             background: white;
             color: var(--dark);
             padding: 1rem 2rem;
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-lg);
             border: 2px solid #e2e8f0;
             font-weight: 600;
+            font-size: 1rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .btn-secondary:hover {
             border-color: var(--primary);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
         }
 
         .hero-trust {
             display: flex;
             gap: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .trust-item {
@@ -357,41 +482,70 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             gap: 0.5rem;
             color: var(--gray);
             font-size: 0.875rem;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            box-shadow: var(--shadow-sm);
         }
 
         .trust-item i {
             color: var(--success);
         }
 
-        .hero-image {
+        .hero-image-wrapper {
             position: relative;
+        }
+
+        .hero-image-main {
+            position: relative;
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-2xl);
         }
 
         .hero-img {
             width: 100%;
-            max-width: 500px;
-            border-radius: var(--radius-xl);
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .hero-image-main:hover .hero-img {
+            transform: scale(1.02);
+        }
+
+        .floating-card {
+            position: absolute;
+            bottom: -1.5rem;
+            left: -1.5rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-lg);
             box-shadow: var(--shadow-xl);
-            animation: float 6s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .floating-card-2 {
+            position: absolute;
+            top: 2rem;
+            right: -1rem;
+            background: var(--gradient-4);
+            padding: 0.75rem 1.25rem;
+            border-radius: 50px;
+            box-shadow: var(--shadow-lg);
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            animation: float 5s ease-in-out infinite 1s;
         }
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        .image-badge {
-            position: absolute;
-            bottom: -1rem;
-            right: -1rem;
-            background: white;
-            padding: 1rem 1.5rem;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
+            50% { transform: translateY(-10px); }
         }
 
         .live-indicator {
@@ -402,35 +556,32 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             animation: pulse 1.5s infinite;
         }
 
-        /* Modern Services Section */
+        /* Services Section */
         .services-section {
-            padding: 6rem 2rem;
+            padding: 5rem 0;
             background: white;
-        }
-
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
         }
 
         .section-header {
             text-align: center;
-            margin-bottom: 4rem;
+            margin-bottom: 3rem;
         }
 
         .section-badge {
             display: inline-block;
-            padding: 0.5rem 1.5rem;
+            padding: 0.4rem 1.25rem;
             background: rgba(16, 185, 129, 0.1);
             color: var(--primary);
             border-radius: 50px;
             font-weight: 600;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .section-title {
-            font-size: 2.5rem;
+            font-size: clamp(2rem, 4vw, 2.5rem);
             font-weight: 700;
             margin-bottom: 1rem;
         }
@@ -444,36 +595,37 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
 
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
         }
 
         .service-card {
             background: white;
-            padding: 2rem;
-            border-radius: var(--radius-lg);
+            padding: 2rem 1.5rem;
+            border-radius: var(--radius-xl);
             box-shadow: var(--shadow-md);
             transition: all 0.3s ease;
             border: 1px solid #f1f5f9;
+            text-align: center;
         }
 
         .service-card:hover {
             transform: translateY(-8px);
             box-shadow: var(--shadow-xl);
-            border-color: var(--primary);
+            border-color: var(--primary-light);
         }
 
         .service-icon {
-            width: 64px;
-            height: 64px;
+            width: 70px;
+            height: 70px;
             background: var(--gradient-1);
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-size: 1.75rem;
-            margin-bottom: 1.5rem;
+            margin: 0 auto 1.5rem;
         }
 
         .service-card h3 {
@@ -484,6 +636,7 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
 
         .service-card p {
             color: var(--gray);
+            font-size: 0.9rem;
             margin-bottom: 1rem;
         }
 
@@ -501,7 +654,7 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             padding: 0.75rem 1.5rem;
             border-radius: var(--radius-md);
             font-weight: 600;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             cursor: pointer;
@@ -515,31 +668,93 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             color: white;
         }
 
+        /* Weather & Currency Widgets */
+        .widgets-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .weather-widget {
+            background: var(--gradient-3);
+            padding: 1.5rem;
+            border-radius: var(--radius-xl);
+            color: white;
+        }
+
+        .currency-widget {
+            background: var(--gradient-dark);
+            padding: 1.5rem;
+            border-radius: var(--radius-xl);
+            color: white;
+        }
+
+        .widget-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .widget-header i {
+            font-size: 1.75rem;
+        }
+
+        .widget-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .weather-temp {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .weather-desc {
+            font-size: 1rem;
+            opacity: 0.9;
+            text-transform: capitalize;
+        }
+
+        .currency-display {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .currency-note {
+            font-size: 0.875rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
         /* Device Tabs */
         .device-section {
-            padding: 4rem 2rem;
+            padding: 3rem 0;
             background: #f8fafc;
         }
 
         .device-tabs {
             display: flex;
             justify-content: center;
-            gap: 1rem;
+            gap: 0.75rem;
             flex-wrap: wrap;
         }
 
         .device-tab {
             background: white;
             border: none;
-            padding: 1rem 2rem;
+            padding: 0.875rem 1.75rem;
             border-radius: var(--radius-lg);
             font-weight: 600;
+            font-size: 0.95rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: var(--shadow-sm);
+            border: 1px solid #e2e8f0;
         }
 
         .device-tab:hover {
@@ -550,23 +765,24 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
         .device-tab.active {
             background: var(--primary);
             color: white;
+            border-color: var(--primary);
         }
 
         /* Products Grid */
         .products-section {
-            padding: 4rem 2rem;
+            padding: 4rem 0;
             background: white;
         }
 
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
         }
 
         .product-card {
             background: white;
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-xl);
             padding: 1.5rem;
             box-shadow: var(--shadow-md);
             transition: all 0.3s ease;
@@ -575,24 +791,8 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             overflow: hidden;
         }
 
-        .product-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-1);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-
-        .product-card:hover::before {
-            transform: scaleX(1);
-        }
-
         .product-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-5px);
             box-shadow: var(--shadow-xl);
         }
 
@@ -604,26 +804,27 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             color: white;
             padding: 0.25rem 0.75rem;
             border-radius: 50px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 0.25rem;
+            z-index: 1;
         }
 
         .product-category {
             display: inline-block;
-            padding: 0.25rem 0.75rem;
+            padding: 0.25rem 0.875rem;
             background: #f1f5f9;
             border-radius: 50px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: var(--gray);
             margin-bottom: 1rem;
         }
 
         .product-name {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
         }
@@ -657,17 +858,18 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
         .product-time {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.375rem;
             color: var(--gray);
-            font-size: 0.875rem;
+            font-size: 0.8rem;
         }
 
         .product-features {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
             font-size: 0.75rem;
             color: var(--gray);
+            flex-wrap: wrap;
         }
 
         .product-features span {
@@ -678,15 +880,17 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
 
         .product-features i {
             color: var(--success);
+            font-size: 0.7rem;
         }
 
         .btn-book {
             background: var(--dark);
             color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
+            padding: 0.75rem 1.25rem;
             border-radius: var(--radius-md);
             font-weight: 600;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -700,55 +904,12 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             transform: translateY(-2px);
         }
 
-        /* Weather Widget (Free OpenWeatherMap API) */
-        .weather-widget {
-            background: var(--gradient-3);
-            padding: 1.5rem;
-            border-radius: var(--radius-lg);
-            color: white;
-            margin: 2rem 0;
-        }
-
-        .weather-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .weather-temp {
-            font-size: 2.5rem;
-            font-weight: 700;
-        }
-
-        .weather-desc {
-            font-size: 1.125rem;
-            opacity: 0.9;
-        }
-
-        /* Currency Converter (Free OpenExchangeRates API) */
-        .currency-widget {
-            background: white;
-            padding: 1.5rem;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            margin: 2rem 0;
-        }
-
-        .currency-display {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        /* Hot Deals Section */
+        /* Hot Deals */
         .hot-deals {
             background: var(--gradient-2);
             padding: 2rem;
-            border-radius: var(--radius-xl);
-            margin-bottom: 4rem;
+            border-radius: var(--radius-2xl);
+            margin-bottom: 3rem;
             color: white;
         }
 
@@ -756,22 +917,22 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             font-size: 1.5rem;
             font-weight: 700;
         }
 
         .hot-deals-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 1.5rem;
         }
 
         .hot-deal-card {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             padding: 1.5rem;
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-xl);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
@@ -780,14 +941,14 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             align-items: center;
             gap: 0.5rem;
             background: rgba(255, 255, 255, 0.2);
-            padding: 0.25rem 0.75rem;
+            padding: 0.25rem 0.875rem;
             border-radius: 50px;
             font-size: 0.75rem;
             margin-bottom: 1rem;
         }
 
         .hot-deal-card h4 {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             margin-bottom: 0.5rem;
         }
 
@@ -795,6 +956,15 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             font-size: 1.75rem;
             font-weight: 700;
             margin: 1rem 0;
+        }
+
+        .hot-time {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
         }
 
         .btn-hot {
@@ -814,9 +984,9 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             box-shadow: var(--shadow-lg);
         }
 
-        /* Referral Section */
+        /* Flip Card - Referral Card */
         .referral-section {
-            padding: 6rem 2rem;
+            padding: 5rem 0;
             background: var(--dark);
             color: white;
         }
@@ -824,7 +994,7 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
         .referral-wrapper {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 4rem;
+            gap: 3rem;
             align-items: center;
         }
 
@@ -833,21 +1003,28 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             align-items: center;
             gap: 0.5rem;
             background: rgba(255, 255, 255, 0.1);
-            padding: 0.5rem 1.5rem;
+            padding: 0.4rem 1.25rem;
             border-radius: 50px;
             margin-bottom: 1.5rem;
+            font-size: 0.875rem;
         }
 
         .referral-content h2 {
-            font-size: 2.5rem;
+            font-size: clamp(1.75rem, 3vw, 2.25rem);
             font-weight: 700;
             margin-bottom: 1rem;
         }
 
+        .referral-content p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1.5rem;
+        }
+
         .referral-steps {
             display: flex;
-            gap: 2rem;
+            gap: 1.5rem;
             margin: 2rem 0;
+            flex-wrap: wrap;
         }
 
         .step {
@@ -857,8 +1034,8 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
         }
 
         .step-number {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             background: var(--primary);
             border-radius: 50%;
             display: flex;
@@ -872,9 +1049,9 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             color: white;
             border: none;
             padding: 1rem 2rem;
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-lg);
             font-weight: 600;
-            font-size: 1.125rem;
+            font-size: 1rem;
             display: flex;
             align-items: center;
             gap: 0.75rem;
@@ -891,7 +1068,7 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
         }
 
         .referral-form input {
@@ -901,10 +1078,16 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             background: rgba(255, 255, 255, 0.1);
             color: white;
             font-size: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .referral-form input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .referral-form input:focus {
+            outline: none;
+            border-color: var(--primary);
         }
 
         .btn-submit {
@@ -918,40 +1101,158 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             transition: all 0.3s ease;
         }
 
+        .btn-submit:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Flip Card Styling */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            max-width: 300px;
+            height: 190px;
+            perspective: 1000px;
+            margin: 0 auto;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .flip-card-front {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            color: white;
+        }
+
+        .flip-card-back {
+            background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .card-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-logo i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .card-logo span {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .card-code-display {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 0.25rem;
+            margin: 0.5rem 0;
+            color: var(--primary-light);
+        }
+
+        .card-label {
+            font-size: 0.6rem;
+            opacity: 0.7;
+            letter-spacing: 1px;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-value {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .card-reward {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--warning);
+        }
+
+        .strip {
+            background: #000;
+            height: 40px;
+            margin: 0 -1.5rem 1rem;
+        }
+
+        .card-cvv {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .cvv-code {
+            background: white;
+            color: var(--dark);
+            padding: 0.25rem 1rem;
+            border-radius: 4px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
         /* Footer */
         .footer {
-            background: #0a0f1c;
+            background: var(--darker);
             color: white;
         }
 
         .footer-top {
-            padding: 4rem 2rem;
+            padding: 3rem 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .footer-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2.5rem;
         }
 
         .footer-brand {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 700;
             margin-bottom: 1rem;
         }
 
         .footer-description {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
             margin-bottom: 1.5rem;
         }
 
         .footer-social {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
         }
 
         .footer-social a {
@@ -973,9 +1274,9 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
         }
 
         .footer-col h4 {
-            font-size: 1.125rem;
+            font-size: 1rem;
             font-weight: 600;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
         }
 
         .footer-col ul {
@@ -983,12 +1284,13 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
         }
 
         .footer-col ul li {
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.625rem;
         }
 
         .footer-col ul li a {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.6);
             text-decoration: none;
+            font-size: 0.875rem;
             transition: color 0.3s ease;
         }
 
@@ -998,18 +1300,20 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
 
         .contact-info li {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 0.75rem;
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
         }
 
         .contact-info i {
             color: var(--primary);
-            width: 20px;
+            margin-top: 0.2rem;
         }
 
         .footer-bottom {
-            padding: 1.5rem 2rem;
+            padding: 1.5rem 0;
         }
 
         .footer-bottom-content {
@@ -1018,15 +1322,17 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             align-items: center;
             flex-wrap: wrap;
             gap: 1rem;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .footer-links {
             display: flex;
-            gap: 2rem;
+            gap: 1.5rem;
         }
 
         .footer-links a {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.5);
             text-decoration: none;
             transition: color 0.3s ease;
         }
@@ -1038,17 +1344,17 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
         /* WhatsApp Float */
         .whatsapp-float {
             position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 60px;
-            height: 60px;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 55px;
+            height: 55px;
             background: #25D366;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 2rem;
+            font-size: 1.75rem;
             box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
             cursor: pointer;
             transition: all 0.3s ease;
@@ -1061,7 +1367,7 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
 
         .whatsapp-tooltip {
             position: absolute;
-            right: 70px;
+            right: 65px;
             background: #1f2937;
             color: white;
             padding: 0.5rem 1rem;
@@ -1077,15 +1383,94 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             opacity: 1;
         }
 
+        /* Success Message */
+        .referral-success-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-dark);
+        }
+
         /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .hero-container {
+                gap: 2rem;
+            }
+        }
+
         @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 1.5rem;
+                gap: 1rem;
+                box-shadow: var(--shadow-lg);
+                transform: translateY(-150%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+            }
+
+            .nav-menu.active {
+                transform: translateY(0);
+            }
+
+            .navbar.scrolled .nav-menu {
+                background: var(--dark);
+            }
+
+            .nav-toggle {
+                display: flex;
+            }
+
+            .nav-toggle.active span:nth-child(1) {
+                transform: rotate(45deg) translate(6px, 6px);
+            }
+
+            .nav-toggle.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .nav-toggle.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(6px, -6px);
+            }
+
             .hero-container {
                 grid-template-columns: 1fr;
                 text-align: center;
+                gap: 2rem;
             }
 
-            .hero-title {
-                font-size: 2.5rem;
+            .hero-content {
+                order: 2;
+            }
+
+            .hero-image-wrapper {
+                order: 1;
+            }
+
+            .hero-badge-group {
+                justify-content: center;
             }
 
             .hero-stats {
@@ -1100,34 +1485,30 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
                 justify-content: center;
             }
 
-            .hero-image {
+            .hero-description {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .floating-card {
                 display: none;
             }
 
-            .nav-menu {
-                position: fixed;
-                top: 80px;
-                left: 0;
-                right: 0;
-                background: white;
-                flex-direction: column;
-                padding: 2rem;
-                gap: 1rem;
-                box-shadow: var(--shadow-lg);
-                transform: translateY(-150%);
-                transition: transform 0.3s ease;
-            }
-
-            .nav-menu.active {
-                transform: translateY(0);
-            }
-
-            .nav-toggle {
-                display: block;
+            .widgets-row {
+                grid-template-columns: 1fr;
             }
 
             .referral-wrapper {
                 grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .referral-steps {
+                justify-content: center;
+            }
+
+            .btn-referral {
+                margin: 0 auto;
             }
 
             .footer-bottom-content {
@@ -1137,166 +1518,256 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
 
             .footer-links {
                 justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .btn-quick-quote span {
+                display: none;
+            }
+
+            .btn-quick-quote {
+                padding: 0.625rem;
             }
         }
 
-        /* Navigation Toggle Button */
-        .nav-toggle {
-            display: none;
-            flex-direction: column;
-            gap: 6px;
-            cursor: pointer;
-        }
-
-        .nav-toggle span {
-            width: 30px;
-            height: 3px;
-            background: var(--dark);
-            transition: all 0.3s ease;
-        }
-
-        .navbar.scrolled .nav-toggle span {
-            background: white;
-        }
-
-        .nav-toggle.active span:nth-child(1) {
-            transform: rotate(45deg) translate(8px, 8px);
-        }
-
-        .nav-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .nav-toggle.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(7px, -7px);
-        }
-
-        @media (max-width: 768px) {
-            .nav-toggle {
-                display: flex;
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 1rem;
             }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-stats {
+                gap: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.75rem;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .device-tab {
+                padding: 0.625rem 1.25rem;
+                font-size: 0.875rem;
+            }
+
+            .section-title {
+                font-size: 1.75rem;
+            }
+
+            .flip-card {
+                max-width: 100%;
+                height: 180px;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-social {
+                justify-content: center;
+            }
+
+            .contact-info li {
+                justify-content: center;
+            }
+
+            .footer-brand {
+                justify-content: center;
+            }
+        }
+
+        /* Animation classes */
+        [data-aos] {
+            pointer-events: none;
+        }
+
+        [data-aos].aos-animate {
+            pointer-events: auto;
         }
     </style>
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <div class="brand-icon">
-                    <i class="fas fa-tools"></i>
+        <div class="container">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <div class="brand-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-name">Erick Phone</span>
+                        <span class="brand-sub">Repair</span>
+                    </div>
                 </div>
-                <div class="brand-text">
-                    <span class="brand-name">Erick Phone</span>
-                    <span class="brand-sub">Repair</span>
+                
+                <div class="nav-menu" id="navMenu">
+                    <a href="#home" class="nav-link">Home</a>
+                    <a href="#services" class="nav-link">Services</a>
+                    <a href="#products" class="nav-link">Products</a>
+                    <a href="#referral" class="nav-link">Refer & Earn</a>
+                    <a href="#contact" class="nav-link">Contact</a>
                 </div>
-            </div>
-            
-            <div class="nav-menu" id="navMenu">
-                <a href="#home" class="nav-link">Home</a>
-                <a href="#services" class="nav-link">Services</a>
-                <a href="#products" class="nav-link">Products</a>
-                <a href="#referral" class="nav-link">Refer & Earn</a>
-                <a href="#contact" class="nav-link">Contact</a>
-            </div>
-            
-            <div class="nav-actions">
-                <button class="btn-nav" onclick="openWhatsApp()" style="background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: var(--radius-md); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fab fa-whatsapp"></i>
-                    <span>Quick Quote</span>
-                </button>
-                <div class="nav-toggle" id="navToggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                
+                <div class="nav-actions">
+                    <button class="btn-quick-quote" onclick="openWhatsApp()">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>Quick Quote</span>
+                    </button>
+                    <div class="nav-toggle" id="navToggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
     
-    <!-- Hero Section -->
+    <!-- Enhanced Hero Section -->
     <section id="home" class="hero-section">
-        <div class="hero-container">
-            <div class="hero-content" data-aos="fade-right">
-                <div class="hero-badge">
-                    <span class="badge-pulse"></span>
-                    <span><i class="fas fa-map-marker-alt"></i> Munyu Road, Nairobi CBD</span>
+        <div class="hero-bg-animation"></div>
+        <div class="container">
+            <div class="hero-container">
+                <div class="hero-content" data-aos="fade-right" data-aos-duration="800">
+                    <div class="hero-badge-group">
+                        <div class="hero-badge">
+                            <span class="badge-pulse"></span>
+                            <span><i class="fas fa-map-marker-alt"></i> Munyu Road, CBD</span>
+                        </div>
+                        <div class="hero-badge offer">
+                            <i class="fas fa-gift"></i>
+                            <span>20% OFF First Repair</span>
+                        </div>
+                    </div>
+                    
+                    <h1 class="hero-title">
+                        <span class="title-main">Premium Phone</span>
+                        <span class="title-highlight">Repair Experts</span>
+                        <span class="title-main">In Nairobi</span>
+                    </h1>
+                    
+                    <p class="hero-description">
+                        <i class="fas fa-check-circle" style="color: var(--success);"></i> 
+                        Same-day service • Genuine parts • 90-day warranty • Free diagnostic
+                    </p>
+                    
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-value"><?php echo number_format($stats['repairs_count'] ?? 5000); ?>+</div>
+                            <div class="stat-label">Repairs Done</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">4.95★</div>
+                            <div class="stat-label">Customer Rating</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">30min</div>
+                            <div class="stat-label">Quick Service</div>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-cta">
+                        <button class="btn-primary" onclick="openWhatsApp()">
+                            <i class="fab fa-whatsapp"></i>
+                            Get Free Quote
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button class="btn-secondary" onclick="getDirections()">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Find Our Shop
+                        </button>
+                    </div>
+                    
+                    <div class="hero-trust">
+                        <div class="trust-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>90-Day Warranty</span>
+                        </div>
+                        <div class="trust-item">
+                            <i class="fas fa-bolt"></i>
+                            <span>Same Day Repair</span>
+                        </div>
+                        <div class="trust-item">
+                            <i class="fas fa-medal"></i>
+                            <span>Certified Techs</span>
+                        </div>
+                    </div>
                 </div>
                 
-                <h1 class="hero-title">
-                    Premium Phone Repair
-                    <span class="title-highlight">In Nairobi CBD</span>
-                </h1>
-                
-                <p class="hero-description">
-                    Expert technicians • Genuine parts • Same-day service • 90-day warranty
-                </p>
-                
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <div class="stat-value"><?php echo number_format($stats['repairs_count'] ?? 5000); ?>+</div>
-                        <div class="stat-label">Repairs Done</div>
+                <div class="hero-image-wrapper" data-aos="fade-left" data-aos-duration="800" data-aos-delay="200">
+                    <div class="hero-image-main">
+                        <img src="assets/images/erick.jpg" alt="Erick Phone Repair Expert" class="hero-img" onerror="this.src='https://placehold.co/600x600/10b981/white?text=Phone+Repair+Expert'">
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-value">4.9★</div>
-                        <div class="stat-label">Rating</div>
+                    <div class="floating-card">
+                        <span class="live-indicator"></span>
+                        <span><strong>Live:</strong> 3 repairs ongoing</span>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-value">30min</div>
-                        <div class="stat-label">Quick Service</div>
+                    <div class="floating-card-2">
+                        <i class="fas fa-star" style="color: #FFD700;"></i>
+                        <span>Top Rated 2024</span>
                     </div>
-                </div>
-                
-                <div class="hero-cta">
-                    <button class="btn-primary" onclick="openWhatsApp()">
-                        <i class="fab fa-whatsapp"></i>
-                        Get Instant Quote
-                    </button>
-                    <button class="btn-secondary" onclick="getDirections()">
-                        <i class="fas fa-map-marker-alt"></i>
-                        Find Our Shop
-                    </button>
-                </div>
-                
-                <div class="hero-trust">
-                    <div class="trust-item">
-                        <i class="fas fa-shield-alt"></i>
-                        <span>90-Day Warranty</span>
-                    </div>
-                    <div class="trust-item">
-                        <i class="fas fa-bolt"></i>
-                        <span>Same Day Repair</span>
-                    </div>
-                    <div class="trust-item">
-                        <i class="fas fa-medal"></i>
-                        <span>Certified Techs</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="hero-image" data-aos="fade-left">
-                <img src="assets/images/erick.jpg" alt="Erick Phone Repair" class="hero-img" onerror="this.src='https://via.placeholder.com/400x400/25D366/ffffff?text=Erick+Repair'">
-                <div class="image-badge">
-                    <span class="live-indicator"></span>
-                    Live Repairs Ongoing
                 </div>
             </div>
         </div>
     </section>
     
-    <!-- Weather Widget (Free OpenWeatherMap API) -->
+    <!-- Weather & Currency Widgets -->
     <section class="container" data-aos="fade-up">
-        <div class="weather-widget" id="weatherWidget">
-            <div class="weather-header">
-                <i class="fas fa-cloud-sun" style="font-size: 2rem;"></i>
-                <div>
-                    <h3>Nairobi Weather</h3>
-                    <p>Current conditions at our shop location</p>
+        <div class="widgets-row">
+            <div class="weather-widget" id="weatherWidget">
+                <div class="widget-header">
+                    <i class="fas fa-cloud-sun"></i>
+                    <div>
+                        <h3>Nairobi Weather</h3>
+                        <p style="opacity: 0.8; font-size: 0.875rem;">Current conditions</p>
+                    </div>
+                </div>
+                <div id="weatherData">
+                    <div class="weather-temp">--°C</div>
+                    <div class="weather-desc">Loading...</div>
+                    <div style="display: flex; gap: 1.5rem; margin-top: 1rem; font-size: 0.875rem;">
+                        <span><i class="fas fa-tint"></i> <span id="humidity">--</span>%</span>
+                        <span><i class="fas fa-wind"></i> <span id="windSpeed">--</span> m/s</span>
+                    </div>
                 </div>
             </div>
-            <div id="weatherData">
-                <div class="weather-temp">--°C</div>
-                <div class="weather-desc">Loading...</div>
+            
+            <div class="currency-widget">
+                <div class="widget-header">
+                    <i class="fas fa-dollar-sign"></i>
+                    <div>
+                        <h3>Currency Converter</h3>
+                        <p style="opacity: 0.8; font-size: 0.875rem;">Live Exchange Rate</p>
+                    </div>
+                </div>
+                <div class="currency-display">
+                    <span>1 USD = </span>
+                    <span id="kesRate">--</span>
+                    <span>KES</span>
+                </div>
+                <p class="currency-note">Updated hourly • Source: OpenExchangeRates</p>
             </div>
         </div>
     </section>
@@ -1307,7 +1778,7 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             <div class="section-header" data-aos="fade-up">
                 <span class="section-badge">Our Services</span>
                 <h2 class="section-title">Expert Phone Repair Services</h2>
-                <p class="section-description">We fix all brands and models with premium quality parts</p>
+                <p class="section-description">Premium quality repairs with genuine parts and warranty</p>
             </div>
             
             <div class="services-grid">
@@ -1316,7 +1787,7 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
                         <i class="fas fa-mobile-screen"></i>
                     </div>
                     <h3>Screen Replacement</h3>
-                    <p>Premium quality screens for iPhone, Samsung, and all major brands.</p>
+                    <p>Premium OLED/LCD screens for all major brands</p>
                     <div class="service-price">From KSH 3,500</div>
                     <button class="service-btn" onclick="selectService('Screen Replacement')">
                         Book Now <i class="fas fa-arrow-right"></i>
@@ -1328,7 +1799,7 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
                         <i class="fas fa-battery-full"></i>
                     </div>
                     <h3>Battery Replacement</h3>
-                    <p>High-capacity replacement batteries. Fix draining issues fast.</p>
+                    <p>High-capacity batteries with 1-year warranty</p>
                     <div class="service-price">From KSH 2,000</div>
                     <button class="service-btn" onclick="selectService('Battery Replacement')">
                         Book Now <i class="fas fa-arrow-right"></i>
@@ -1340,7 +1811,7 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
                         <i class="fas fa-charging-station"></i>
                     </div>
                     <h3>Charging Port Fix</h3>
-                    <p>Fast charging port repair and replacement. Get charging again.</p>
+                    <p>Fast and reliable charging port repair</p>
                     <div class="service-price">From KSH 1,500</div>
                     <button class="service-btn" onclick="selectService('Charging Port Fix')">
                         Book Now <i class="fas fa-arrow-right"></i>
@@ -1352,7 +1823,7 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
                         <i class="fas fa-water"></i>
                     </div>
                     <h3>Water Damage</h3>
-                    <p>Professional water damage diagnostic and repair. Save your phone.</p>
+                    <p>Professional ultrasonic cleaning and repair</p>
                     <div class="service-price">From KSH 2,500</div>
                     <button class="service-btn" onclick="selectService('Water Damage Repair')">
                         Book Now <i class="fas fa-arrow-right"></i>
@@ -1362,44 +1833,27 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
         </div>
     </section>
     
-    <!-- Currency Converter (Free OpenExchangeRates API) -->
-    <section class="container" data-aos="fade-up">
-        <div class="currency-widget">
-            <h3 style="margin-bottom: 1rem;">Currency Converter</h3>
-            <div class="currency-display">
-                <span>1 USD = </span>
-                <span id="kesRate">--</span>
-                <span>KES</span>
-            </div>
-            <p style="color: var(--gray); margin-top: 0.5rem; font-size: 0.875rem;">Live exchange rates for your convenience</p>
-        </div>
-    </section>
-    
-       <!-- Device Selection -->
+    <!-- Device Selection -->
     <section class="device-section">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
                 <span class="section-badge">Select Your Device</span>
                 <h2 class="section-title">What device needs repair?</h2>
-                <p class="section-description">Choose your device for accurate quote and service time</p>
+                <p class="section-description">Choose for accurate pricing and service time</p>
             </div>
             
             <div class="device-tabs" data-aos="fade-up">
                 <button class="device-tab active" onclick="filterProducts('all')">
-                    <i class="fas fa-th-large"></i>
-                    <span>All Devices</span>
+                    <i class="fas fa-th-large"></i> All Devices
                 </button>
                 <button class="device-tab" onclick="filterProducts('iPhone')">
-                    <i class="fab fa-apple"></i>
-                    <span>iPhone</span>
+                    <i class="fab fa-apple"></i> iPhone
                 </button>
                 <button class="device-tab" onclick="filterProducts('Samsung')">
-                    <i class="fas fa-mobile-alt"></i>
-                    <span>Samsung</span>
+                    <i class="fas fa-mobile-alt"></i> Samsung
                 </button>
                 <button class="device-tab" onclick="filterProducts('Battery')">
-                    <i class="fas fa-battery-three-quarters"></i>
-                    <span>Battery</span>
+                    <i class="fas fa-battery-three-quarters"></i> Battery
                 </button>
             </div>
         </div>
@@ -1408,12 +1862,11 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
     <!-- Products Section -->
     <section id="products" class="products-section">
         <div class="container">
-            <!-- Hot Deals -->
             <?php if ($hotProductsResult->num_rows > 0): ?>
             <div class="hot-deals" data-aos="fade-up">
                 <div class="hot-deals-header">
                     <i class="fas fa-fire"></i>
-                    <h3>Hot Deals This Week</h3>
+                    <h3>🔥 Hot Deals This Week</h3>
                 </div>
                 <div class="hot-deals-grid">
                     <?php while ($hot = $hotProductsResult->fetch_assoc()): ?>
@@ -1427,7 +1880,7 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
                         <div class="hot-price">KSH <?php echo number_format($hot['price']); ?></div>
                         <div class="hot-time"><i class="far fa-clock"></i> <?php echo htmlspecialchars($hot['repair_time']); ?></div>
                         <button class="btn-hot" onclick="openWhatsAppWithProduct('<?php echo addslashes($hot['name']); ?>')">
-                            Claim Deal
+                            Claim Deal <i class="fas fa-arrow-right"></i>
                         </button>
                     </div>
                     <?php endwhile; ?>
@@ -1436,9 +1889,9 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             <?php endif; ?>
             
             <div class="section-header" data-aos="fade-up">
-                <span class="section-badge">Our Services & Pricing</span>
+                <span class="section-badge">Pricing</span>
                 <h2 class="section-title">Transparent Pricing, Quality Service</h2>
-                <p class="section-description">All repairs come with 90-day warranty and free diagnostic</p>
+                <p class="section-description">All repairs include free diagnostic and 90-day warranty</p>
             </div>
             
             <div class="products-grid" id="productsGrid">
@@ -1448,7 +1901,7 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
                 ?>
                 <div class="product-card" data-category="<?php echo htmlspecialchars($product['category']); ?>" data-aos="fade-up">
                     <?php if ($product['is_hot'] != 'none'): ?>
-                    <div class="product-badge <?php echo $product['is_hot']; ?>">
+                    <div class="product-badge">
                         <i class="fas fa-fire"></i> Hot
                     </div>
                     <?php endif; ?>
@@ -1486,19 +1939,19 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
         </div>
     </section>
     
-    <!-- Referral Section -->
+    <!-- Referral Section with Flip Card -->
     <section id="referral" class="referral-section">
         <div class="container">
             <div class="referral-wrapper">
                 <div class="referral-content" data-aos="fade-right">
                     <span class="referral-badge"><i class="fas fa-gift"></i> Earn Rewards</span>
                     <h2>Refer Friends & Earn KSH <?php echo $settings['weekly_reward'] ?? 200; ?></h2>
-                    <p>Share your unique referral code with friends. When they get their phone repaired, you both earn rewards!</p>
+                    <p>Share your unique referral code. When friends get their phone repaired, you both earn rewards!</p>
                     
                     <div class="referral-steps">
-                        <div class="step"><span class="step-number">1</span> Get your code</div>
-                        <div class="step"><span class="step-number">2</span> Share with friends</div>
-                        <div class="step"><span class="step-number">3</span> Earn rewards</div>
+                        <div class="step"><span class="step-number">1</span> Get code</div>
+                        <div class="step"><span class="step-number">2</span> Share</div>
+                        <div class="step"><span class="step-number">3</span> Earn</div>
                     </div>
                     
                     <div id="referral-area">
@@ -1509,7 +1962,7 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
                     
                     <div id="referral-form" style="display: none;">
                         <form onsubmit="registerForReferral(event)" class="referral-form">
-                            <input type="tel" id="ref-phone" placeholder="Your Phone Number" required>
+                            <input type="tel" id="ref-phone" placeholder="Your Phone Number (e.g., 0712345678)" required>
                             <input type="email" id="ref-email" placeholder="Your Email (Optional)">
                             <button type="submit" class="btn-submit">Generate My Code <i class="fas fa-arrow-right"></i></button>
                         </form>
@@ -1519,10 +1972,33 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
                 </div>
                 
                 <div class="referral-illustration" data-aos="fade-left">
-                    <div class="referral-card-display">
-                        <div class="card-front">
-                            <i class="fas fa-credit-card"></i>
-                            <span>Your Referral Card</span>
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <div class="card-logo">
+                                    <i class="fas fa-tools"></i>
+                                    <span>ERICK REPAIR</span>
+                                </div>
+                                <div class="card-label">REFERRAL CODE</div>
+                                <div class="card-code-display" id="displayCode">----</div>
+                                <div class="card-label">REWARDS BALANCE</div>
+                                <div class="card-reward">KSH 0</div>
+                                <div style="margin-top: auto; font-size: 0.6rem; opacity: 0.7;">
+                                    <i class="far fa-credit-card"></i> Tap to flip
+                                </div>
+                            </div>
+                            <div class="flip-card-back">
+                                <div class="strip"></div>
+                                <div style="text-align: left;">
+                                    <div class="card-label">SHARE YOUR LINK</div>
+                                    <div style="background: rgba(255,255,255,0.1); padding: 0.5rem; border-radius: 4px; font-size: 0.55rem; word-break: break-all; margin: 0.5rem 0;" id="displayLink">
+                                        erickrepair.co.ke/?ref=----
+                                    </div>
+                                </div>
+                                <div class="card-cvv">
+                                    <div class="cvv-code" id="cvvCode">TAP</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1531,7 +2007,7 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
     </section>
     
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" id="contact">
         <div class="footer-top">
             <div class="container">
                 <div class="footer-grid">
@@ -1541,11 +2017,12 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
                             <span>Erick Phone Repair</span>
                         </div>
                         <p class="footer-description">
-                            Nairobi's trusted phone repair experts. Fast, reliable, and affordable repairs.
+                            Nairobi's most trusted phone repair experts. Fast, reliable, and affordable.
                         </p>
                         <div class="footer-social">
                             <a href="#"><i class="fab fa-facebook-f"></i></a>
                             <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-tiktok"></i></a>
                             <a href="#"><i class="fab fa-whatsapp"></i></a>
                         </div>
                     </div>
@@ -1557,25 +2034,24 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
                             <li><a href="#services">Services</a></li>
                             <li><a href="#products">Products</a></li>
                             <li><a href="#referral">Referral Program</a></li>
-                            <li><a href="#contact">Contact Us</a></li>
                         </ul>
                     </div>
                     
                     <div class="footer-col">
-                        <h4>Our Services</h4>
+                        <h4>Services</h4>
                         <ul>
                             <li><a href="#">iPhone Repair</a></li>
                             <li><a href="#">Samsung Repair</a></li>
                             <li><a href="#">Screen Replacement</a></li>
                             <li><a href="#">Battery Service</a></li>
-                            <li><a href="#">Water Damage Repair</a></li>
+                            <li><a href="#">Water Damage</a></li>
                         </ul>
                     </div>
                     
                     <div class="footer-col">
                         <h4>Contact Info</h4>
                         <ul class="contact-info">
-                            <li><i class="fas fa-map-marker-alt"></i> Munyu Road, Nairobi CBD</li>
+                            <li><i class="fas fa-map-marker-alt"></i> Munyu Road, Opposite Jamia Mall, Nairobi CBD</li>
                             <li><i class="fas fa-phone"></i> <?php echo $settings['whatsapp_number'] ?? '+254 716 868 013'; ?></li>
                             <li><i class="fab fa-whatsapp"></i> <?php echo $settings['whatsapp_number'] ?? '+254 716 868 013'; ?></li>
                             <li><i class="fas fa-clock"></i> Mon-Sat: 8AM - 7PM</li>
@@ -1602,7 +2078,7 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
     <!-- WhatsApp Float -->
     <div class="whatsapp-float" onclick="openWhatsApp()">
         <i class="fab fa-whatsapp"></i>
-        <span class="whatsapp-tooltip">Chat with us!</span>
+        <span class="whatsapp-tooltip">Chat with us on WhatsApp!</span>
     </div>
     
     <!-- Scripts -->
@@ -1613,92 +2089,83 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
         // Initialize AOS
         AOS.init({
             duration: 800,
-            once: true
+            once: true,
+            offset: 100
         });
         
-        // Free OpenWeatherMap API Integration
+        // Weather API
         async function getWeather() {
             const apiKey = '<?php echo $weatherApiKey; ?>';
-            const city = 'Nairobi';
+            if (apiKey === '291984eea38a423b07d4614a54436c26') {
+                document.getElementById('weatherData').innerHTML = `
+                    <div class="weather-temp">24°C</div>
+                    <div class="weather-desc">Partly Cloudy</div>
+                    <div style="display: flex; gap: 1.5rem; margin-top: 1rem; font-size: 0.875rem;">
+                        <span><i class="fas fa-tint"></i> 65%</span>
+                        <span><i class="fas fa-wind"></i> 3.5 m/s</span>
+                    </div>
+                `;
+                return;
+            }
             
             try {
-                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`);
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Nairobi&units=metric&appid=${apiKey}`);
                 const data = await response.json();
-                
                 if (data.main) {
                     document.getElementById('weatherData').innerHTML = `
                         <div class="weather-temp">${Math.round(data.main.temp)}°C</div>
                         <div class="weather-desc">${data.weather[0].description}</div>
-                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <div style="display: flex; gap: 1.5rem; margin-top: 1rem; font-size: 0.875rem;">
                             <span><i class="fas fa-tint"></i> ${data.main.humidity}%</span>
                             <span><i class="fas fa-wind"></i> ${data.wind.speed} m/s</span>
                         </div>
                     `;
                 }
             } catch (error) {
-                console.log('Weather API not configured');
-                document.getElementById('weatherData').innerHTML = `
-                    <div class="weather-temp">24°C</div>
-                    <div class="weather-desc">Partly Cloudy</div>
-                `;
+                console.log('Weather API error:', error);
             }
         }
         
-        // Free OpenExchangeRates API Integration
+        // Currency API
         async function getExchangeRate() {
             const appId = '<?php echo $openExchangeAppId; ?>';
+            if (appId === '31b4dbfc1ef74e2589ac7fb7b2aebec6') {
+                document.getElementById('kesRate').textContent = '145.50';
+                return;
+            }
             
             try {
                 const response = await fetch(`https://openexchangerates.org/api/latest.json?app_id=${appId}`);
                 const data = await response.json();
-                
                 if (data.rates) {
-                    const kesRate = data.rates.KES;
-                    document.getElementById('kesRate').textContent = kesRate.toFixed(2);
+                    document.getElementById('kesRate').textContent = data.rates.KES.toFixed(2);
                 }
             } catch (error) {
-                console.log('Exchange rate API not configured');
+                console.log('Exchange rate API error:', error);
                 document.getElementById('kesRate').textContent = '145.50';
             }
         }
         
-        // Load APIs if keys are provided
-        if ('<?php echo $weatherApiKey; ?>' !== '291984eea38a423b07d4614a54436c26') {
-            getWeather();
-        }
-        
-        if ('<?php echo $openExchangeAppId; ?>' !== '31b4dbfc1ef74e2589ac7fb7b2aebec6') {
-            getExchangeRate();
-        }
+        getWeather();
+        getExchangeRate();
         
         // WhatsApp Functions
         function openWhatsApp() {
-            let device = localStorage.getItem('device') || 'Unknown';
-            let issue = localStorage.getItem('issue') || 'Not specified';
-            let msg = encodeURIComponent(`Repair Request\nDevice: ${device}\nIssue: ${issue}\nLocation: Nairobi CBD\n\nRequesting quote and availability`);
+            const msg = encodeURIComponent(`Hello Erick Phone Repair,\n\nI'd like to get a quote for phone repair services.\nLocation: Nairobi CBD`);
             window.open(`https://wa.me/254716868013?text=${msg}`, '_blank');
         }
         
         function openWhatsAppWithProduct(product) {
-            let msg = encodeURIComponent(`Service Request\nService: ${product}\nLocation: Nairobi CBD\n\nI'm interested in this service. Please provide details.`);
+            const msg = encodeURIComponent(`Hello,\n\nI'm interested in: ${product}\n\nPlease provide pricing and availability.`);
             window.open(`https://wa.me/254716868013?text=${msg}`, '_blank');
         }
         
         function selectService(service) {
-            localStorage.setItem('device', service);
-            openWhatsApp();
+            openWhatsAppWithProduct(service);
         }
         
         function getDirections() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    window.open(`https://www.google.com/maps/dir/${pos.coords.latitude},${pos.coords.longitude}/Munyu+Road+Nairobi`, '_blank');
-                }, () => {
-                    window.open('https://www.google.com/maps/search/Munyu+Road+Nairobi', '_blank');
-                });
-            } else {
-                window.open('https://www.google.com/maps/search/Munyu+Road+Nairobi', '_blank');
-            }
+            window.open('https://www.google.com/maps/search/Munyu+Road+Nairobi', '_blank');
         }
         
         function filterProducts(category) {
@@ -1706,12 +2173,7 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
             event.target.closest('.device-tab').classList.add('active');
             
             document.querySelectorAll('.product-card').forEach(card => {
-                if (category === 'all') {
-                    card.style.display = 'block';
-                } else {
-                    const cat = card.dataset.category || '';
-                    card.style.display = cat.includes(category) ? 'block' : 'none';
-                }
+                card.style.display = (category === 'all' || card.dataset.category?.includes(category)) ? 'block' : 'none';
             });
         }
         
@@ -1737,69 +2199,79 @@ $weatherApiKey = 'YOUR_OPENWEATHER_API_KEY'; // Get from https://openweathermap.
                     document.getElementById('referral-form').style.display = 'none';
                     document.getElementById('referral-success').style.display = 'block';
                     document.getElementById('referral-success').innerHTML = `
-                        <div style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 2rem; border-radius: var(--radius-lg); border: 1px solid rgba(255, 255, 255, 0.2);">
+                        <div class="referral-success-box">
                             <h3 style="color: var(--success); margin-bottom: 1rem;"><i class="fas fa-check-circle"></i> Success!</h3>
-                            <p style="font-size: 1.125rem; margin-bottom: 0.5rem;">Your referral code:</p>
-                            <p style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--primary);">${data.referral_code}</p>
+                            <p style="margin-bottom: 0.5rem;">Your referral code:</p>
+                            <p style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--primary-light);">${data.referral_code}</p>
                             <p style="margin-bottom: 0.5rem;">Share this link:</p>
-                            <code style="background: rgba(255, 255, 255, 0.2); padding: 1rem; display: block; border-radius: var(--radius-md); word-break: break-all;">
+                            <code style="background: rgba(255,255,255,0.1); padding: 0.75rem; display: block; border-radius: var(--radius-md); word-break: break-all; font-size: 0.8rem;">
                                 ${window.location.origin}?ref=${data.referral_code}
                             </code>
-                            <button onclick="copyReferralLink('${data.referral_code}')" style="margin-top: 1rem; background: white; color: var(--dark); border: none; padding: 0.75rem 1.5rem; border-radius: var(--radius-md); font-weight: 600; cursor: pointer;">
+                            <button onclick="copyReferralLink('${data.referral_code}')" class="copy-btn">
                                 <i class="fas fa-copy"></i> Copy Link
                             </button>
                         </div>
                     `;
+                    
+                    // Update flip card
+                    document.getElementById('displayCode').textContent = data.referral_code;
+                    document.getElementById('displayLink').textContent = `${window.location.origin}?ref=${data.referral_code}`;
+                    document.getElementById('cvvCode').textContent = data.referral_code;
                 } else {
                     alert('Error: ' + data.message);
                 }
             } catch (error) {
-                alert('An error occurred. Please try again.');
+                alert('Network error. Please try again.');
             }
         }
         
         function copyReferralLink(code) {
             const link = `${window.location.origin}?ref=${code}`;
-            navigator.clipboard.writeText(link);
-            alert('Referral link copied to clipboard!');
+            navigator.clipboard.writeText(link).then(() => {
+                alert('✅ Referral link copied to clipboard!');
+            });
         }
         
-        // Mobile Menu Toggle
-        document.getElementById('navToggle').addEventListener('click', function() {
+        // Mobile Menu
+        const navToggle = document.getElementById('navToggle');
+        const navMenu = document.getElementById('navMenu');
+        
+        navToggle.addEventListener('click', function() {
             this.classList.toggle('active');
-            document.getElementById('navMenu').classList.toggle('active');
+            navMenu.classList.toggle('active');
         });
         
-        // Navbar Scroll Effect
+        // Close menu on link click
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                navToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+        
+        // Navbar scroll
         window.addEventListener('scroll', function() {
             const navbar = document.getElementById('navbar');
-            if (window.scrollY > 100) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
+            navbar.classList.toggle('scrolled', window.scrollY > 50);
         });
         
-        // Check for referral in URL
+        // Referral from URL
         const urlParams = new URLSearchParams(window.location.search);
         const refCode = urlParams.get('ref');
         if (refCode) {
             localStorage.setItem('referral_code', refCode);
+            document.getElementById('displayCode').textContent = refCode;
+            document.getElementById('displayLink').textContent = `${window.location.origin}?ref=${refCode}`;
+            document.getElementById('cvvCode').textContent = refCode;
         }
         
-        // Smooth scroll for navigation links
+        // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+            anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                    // Close mobile menu if open
-                    document.getElementById('navMenu').classList.remove('active');
-                    document.getElementById('navToggle').classList.remove('active');
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
         });
