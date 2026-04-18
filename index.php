@@ -13,10 +13,16 @@ $trackStmt = $conn->prepare("INSERT INTO analytics (page_url, visitor_ip, referr
 $trackStmt->bind_param("ssss", $page, $ip, $referrer, $ua);
 $trackStmt->execute();
 
-// Capture referral
-if (isset($_GET['ref'])) {
-    $_SESSION['referral_code'] = $_GET['ref'];
-    setcookie('referral_code', $_GET['ref'], time() + (86400 * 30), "/");
+// Capture referral and track visit
+$refCode = $_GET['ref'] ?? '';
+if (!empty($refCode)) {
+    $_SESSION['referral_code'] = $refCode;
+    setcookie('referral_code', $refCode, time() + (86400 * 30), "/");
+    
+    // Track referral visit in analytics
+    $trackRefStmt = $conn->prepare("UPDATE analytics SET referral_code = ? WHERE id = LAST_INSERT_ID()");
+    $trackRefStmt->bind_param("s", $refCode);
+    $trackRefStmt->execute();
 }
 
 // Get settings
@@ -1091,6 +1097,28 @@ $stats = $statsResult->fetch_assoc();
             border-color: var(--primary);
         }
 
+        .terms-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.875rem;
+        }
+
+        .terms-checkbox input {
+            width: auto;
+            margin: 0;
+        }
+
+        .terms-checkbox a {
+            color: var(--primary-light);
+            text-decoration: none;
+        }
+
+        .terms-checkbox a:hover {
+            text-decoration: underline;
+        }
+
         .btn-submit {
             background: white;
             color: var(--dark);
@@ -1105,6 +1133,11 @@ $stats = $statsResult->fetch_assoc();
         .btn-submit:hover {
             background: var(--primary);
             color: white;
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         /* Enhanced Flip Card Styles */
@@ -1356,6 +1389,19 @@ $stats = $statsResult->fetch_assoc();
             background: var(--primary-dark);
         }
 
+        .referral-invite-message {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: #fbbf24;
+        }
+
+        .referral-invite-message i {
+            margin-right: 0.5rem;
+        }
+
         /* Footer */
         .footer {
             background: var(--darker);
@@ -1477,6 +1523,21 @@ $stats = $statsResult->fetch_assoc();
 
         .footer-links a:hover {
             color: var(--primary);
+        }
+
+        .developer-credit {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .developer-credit a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+        }
+
+        .developer-credit a:hover {
+            color: var(--primary-light);
         }
 
         /* WhatsApp Float */
@@ -2062,10 +2123,16 @@ $stats = $statsResult->fetch_assoc();
                     <h2>Refer Friends & Earn KSH <?php echo $settings['weekly_reward'] ?? 200; ?></h2>
                     <p>Share your unique referral code. When friends get their phone repaired, you both earn rewards!</p>
                     
+                    <!-- Invite Message (shown when visiting via referral link) -->
+                    <div id="referralInviteMessage" class="referral-invite-message" style="display: none;">
+                        <i class="fas fa-gift"></i>
+                        <span id="inviteMessageText">You've been invited! Sign up to earn rewards.</span>
+                    </div>
+                    
                     <div class="referral-steps">
-                        <div class="step"><span class="step-number">1</span> Get code</div>
-                        <div class="step"><span class="step-number">2</span> Share</div>
-                        <div class="step"><span class="step-number">3</span> Earn</div>
+                        <div class="step"><span class="step-number">1</span> Sign Up</div>
+                        <div class="step"><span class="step-number">2</span> Share Code</div>
+                        <div class="step"><span class="step-number">3</span> Earn KSH</div>
                     </div>
                     
                     <div id="referral-area">
@@ -2076,9 +2143,15 @@ $stats = $statsResult->fetch_assoc();
                     
                     <div id="referral-form" style="display: none;">
                         <form onsubmit="registerForReferral(event)" class="referral-form">
-                            <input type="tel" id="ref-phone" placeholder="Your Phone Number (e.g., 0712345678)" required>
-                            <input type="email" id="ref-email" placeholder="Your Email (Optional)">
-                            <button type="submit" class="btn-submit">Generate My Code <i class="fas fa-arrow-right"></i></button>
+                            <input type="tel" id="ref-phone" placeholder="Your Phone Number * (e.g., 0712345678)" required>
+                            <input type="email" id="ref-email" placeholder="Your Email *" required>
+                            <div class="terms-checkbox">
+                                <input type="checkbox" id="termsCheck" required>
+                                <label for="termsCheck">
+                                    I agree to the <a href="#" onclick="showTerms()">Terms & Conditions</a> and <a href="#" onclick="showPrivacy()">Privacy Policy</a>
+                                </label>
+                            </div>
+                            <button type="submit" class="btn-submit" id="submitBtn">Generate My Code <i class="fas fa-arrow-right"></i></button>
                         </form>
                     </div>
                     
@@ -2106,7 +2179,7 @@ $stats = $statsResult->fetch_assoc();
                                     <div class="card-info-row">
                                         <div class="card-info-item">
                                             <div class="card-label">REWARDS EARNED</div>
-                                            <div class="card-reward">KSH 0</div>
+                                            <div class="card-reward" id="cardReward">KSH 0</div>
                                         </div>
                                         <div class="card-info-item">
                                             <div class="card-label">STATUS</div>
@@ -2203,10 +2276,13 @@ $stats = $statsResult->fetch_assoc();
                 <div class="footer-bottom-content">
                     <p>&copy; <?php echo date('Y'); ?> Erick Phone Repair. All rights reserved.</p>
                     <div class="footer-links">
-                        <a href="#">Privacy Policy</a>
-                        <a href="#">Terms of Service</a>
+                        <a href="#" onclick="showPrivacy()">Privacy Policy</a>
+                        <a href="#" onclick="showTerms()">Terms of Service</a>
                         <a href="/admin/">Admin Login</a>
                     </div>
+                </div>
+                <div class="developer-credit">
+                    <p>Developed by <a href="https://altechit.netlify.app" target="_blank">Altech Software Developers</a> | <i class="fas fa-code"></i> Professional Web Solutions</p>
                 </div>
             </div>
         </div>
@@ -2229,9 +2305,12 @@ $stats = $statsResult->fetch_assoc();
             offset: 100
         });
         
-        // Free Weather Data - Using Nairobi's typical weather patterns
+        // Global variables
+        let currentReferralCode = '';
+        let invitedBy = '';
+        
+        // Free Weather Data
         function getWeather() {
-            // Free open-source weather simulation based on time of day
             const hour = new Date().getHours();
             let temp, desc, humidity, windSpeed;
             
@@ -2271,7 +2350,7 @@ $stats = $statsResult->fetch_assoc();
                 </div>
             `;
             
-            // Try to fetch real weather if possible (using free API)
+            // Try wttr.in free API
             fetch('https://wttr.in/Nairobi?format=%t|%C|%h|%w')
                 .then(response => response.text())
                 .then(data => {
@@ -2292,19 +2371,14 @@ $stats = $statsResult->fetch_assoc();
                         `;
                     }
                 })
-                .catch(() => {
-                    // Keep simulated data on error
-                });
+                .catch(() => {});
         }
         
-        // Free Currency Data - Using recent known exchange rate
+        // Free Currency Data
         function getExchangeRate() {
-            // Default fallback rate (USD to KES approximate)
             const defaultRate = 145.50;
-            
             document.getElementById('kesRate').textContent = defaultRate.toFixed(2);
             
-            // Try to fetch from free API
             fetch('https://api.exchangerate-api.com/v4/latest/USD')
                 .then(response => response.json())
                 .then(data => {
@@ -2312,16 +2386,11 @@ $stats = $statsResult->fetch_assoc();
                         document.getElementById('kesRate').textContent = data.rates.KES.toFixed(2);
                     }
                 })
-                .catch(() => {
-                    // Keep default rate on error
-                });
+                .catch(() => {});
         }
         
-        // Initialize widgets
         getWeather();
         getExchangeRate();
-        
-        // Refresh weather every 30 minutes
         setInterval(getWeather, 1800000);
         
         // WhatsApp Functions
@@ -2364,80 +2433,133 @@ $stats = $statsResult->fetch_assoc();
             document.getElementById('referral-form').style.display = 'block';
         }
         
+        function showTerms() {
+            alert('Terms & Conditions\n\nBy using our services, you agree to our repair terms. All repairs come with a 90-day warranty. Parts used are genuine or premium quality. Payment is required upon service completion.');
+        }
+        
+        function showPrivacy() {
+            alert('Privacy Policy\n\nWe collect your phone number and email only for service updates and referral rewards. Your data is never shared with third parties without your consent.');
+        }
+        
         async function registerForReferral(event) {
             event.preventDefault();
+            
             const phone = document.getElementById('ref-phone').value;
             const email = document.getElementById('ref-email').value;
+            const termsChecked = document.getElementById('termsCheck').checked;
+            
+            if (!termsChecked) {
+                alert('Please agree to the Terms & Conditions');
+                return;
+            }
+            
+            // Validate phone
+            const phoneRegex = /^(\+254|0)[17]\d{8}$/;
+            if (!phoneRegex.test(phone.replace(/\s+/g, ''))) {
+                alert('Please enter a valid Kenyan phone number (e.g., 0712345678)');
+                return;
+            }
+            
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            
+            const referredBy = localStorage.getItem('referral_code') || invitedBy || '';
             
             try {
                 const response = await fetch('/api/users.php', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({action: 'register', phone: phone, email: email})
+                    body: JSON.stringify({
+                        action: 'register',
+                        phone: phone,
+                        email: email,
+                        referred_by: referredBy
+                    })
                 });
                 const data = await response.json();
                 
                 if (data.success) {
-                    document.getElementById('referral-form').style.display = 'none';
-                    document.getElementById('referral-success').style.display = 'block';
-                    document.getElementById('referral-success').innerHTML = `
-                        <div class="referral-success-box">
-                            <h3 style="color: var(--success); margin-bottom: 1rem;"><i class="fas fa-check-circle"></i> Success!</h3>
-                            <p style="margin-bottom: 0.5rem;">Your referral code:</p>
-                            <p style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--primary-light);">${data.referral_code}</p>
-                            <p style="margin-bottom: 0.5rem;">Share this link:</p>
-                            <code style="background: rgba(255,255,255,0.1); padding: 0.75rem; display: block; border-radius: var(--radius-md); word-break: break-all; font-size: 0.8rem;">
-                                ${window.location.origin}?ref=${data.referral_code}
-                            </code>
-                            <button onclick="copyReferralLink('${data.referral_code}')" class="copy-btn">
-                                <i class="fas fa-copy"></i> Copy Link
-                            </button>
-                        </div>
-                    `;
+                    currentReferralCode = data.referral_code;
+                    showSuccessMessage(data, referredBy);
                     
-                    // Update flip card
-                    updateFlipCard(data.referral_code);
+                    // Load referral stats
+                    loadReferralStats(data.referral_code);
                 } else {
-                    // For demo/fallback - generate a code
-                    const demoCode = 'ER' + Math.random().toString(36).substring(2, 8).toUpperCase();
-                    document.getElementById('referral-form').style.display = 'none';
-                    document.getElementById('referral-success').style.display = 'block';
-                    document.getElementById('referral-success').innerHTML = `
-                        <div class="referral-success-box">
-                            <h3 style="color: var(--success); margin-bottom: 1rem;"><i class="fas fa-check-circle"></i> Success!</h3>
-                            <p style="margin-bottom: 0.5rem;">Your referral code:</p>
-                            <p style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--primary-light);">${demoCode}</p>
-                            <p style="margin-bottom: 0.5rem;">Share this link:</p>
-                            <code style="background: rgba(255,255,255,0.1); padding: 0.75rem; display: block; border-radius: var(--radius-md); word-break: break-all; font-size: 0.8rem;">
-                                ${window.location.origin}?ref=${demoCode}
-                            </code>
-                            <button onclick="copyReferralLink('${demoCode}')" class="copy-btn">
-                                <i class="fas fa-copy"></i> Copy Link
-                            </button>
-                        </div>
-                    `;
-                    updateFlipCard(demoCode);
+                    throw new Error(data.message || 'Registration failed');
                 }
             } catch (error) {
-                // Fallback for demo
-                const demoCode = 'ER' + Math.random().toString(36).substring(2, 8).toUpperCase();
-                document.getElementById('referral-form').style.display = 'none';
-                document.getElementById('referral-success').style.display = 'block';
-                document.getElementById('referral-success').innerHTML = `
-                    <div class="referral-success-box">
-                        <h3 style="color: var(--success); margin-bottom: 1rem;"><i class="fas fa-check-circle"></i> Success!</h3>
-                        <p style="margin-bottom: 0.5rem;">Your referral code:</p>
-                        <p style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--primary-light);">${demoCode}</p>
-                        <p style="margin-bottom: 0.5rem;">Share this link:</p>
-                        <code style="background: rgba(255,255,255,0.1); padding: 0.75rem; display: block; border-radius: var(--radius-md); word-break: break-all; font-size: 0.8rem;">
-                            ${window.location.origin}?ref=${demoCode}
-                        </code>
-                        <button onclick="copyReferralLink('${demoCode}')" class="copy-btn">
-                            <i class="fas fa-copy"></i> Copy Link
-                        </button>
+                console.error('Error:', error);
+                // Fallback to demo mode
+                const demoCode = generateDemoCode();
+                currentReferralCode = demoCode;
+                showSuccessMessage({success: true, is_new: true, referral_code: demoCode}, referredBy);
+            }
+            
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Generate My Code <i class="fas fa-arrow-right"></i>';
+        }
+        
+        function generateDemoCode() {
+            return 'ER' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+        
+        function showSuccessMessage(data, referredBy) {
+            document.getElementById('referral-form').style.display = 'none';
+            document.getElementById('referral-success').style.display = 'block';
+            
+            let inviteMessage = '';
+            if (referredBy) {
+                inviteMessage = `
+                    <div class="referral-invite-message">
+                        <i class="fas fa-gift"></i>
+                        You were invited! Complete a repair to earn KSH <?php echo $settings['weekly_reward'] ?? 200; ?> for you and your friend!
                     </div>
                 `;
-                updateFlipCard(demoCode);
+            }
+            
+            document.getElementById('referral-success').innerHTML = `
+                <div class="referral-success-box">
+                    <h3 style="color: var(--success); margin-bottom: 1rem;">
+                        <i class="fas fa-check-circle"></i> ${data.is_new ? 'Welcome!' : 'Welcome Back!'}
+                    </h3>
+                    ${inviteMessage}
+                    <p style="margin-bottom: 0.5rem;">Your referral code:</p>
+                    <p style="font-size: 2.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--primary-light);">${data.referral_code}</p>
+                    <p style="margin-bottom: 0.5rem;">Share this link:</p>
+                    <code style="background: rgba(255,255,255,0.1); padding: 0.75rem; display: block; border-radius: var(--radius-md); word-break: break-all; font-size: 0.8rem;" id="shareLinkCode">
+                        ${window.location.origin}?ref=${data.referral_code}
+                    </code>
+                    <button onclick="copyReferralLink('${data.referral_code}')" class="copy-btn">
+                        <i class="fas fa-copy"></i> Copy Link
+                    </button>
+                    <button onclick="shareViaWhatsApp('${data.referral_code}')" class="copy-btn" style="background: #25D366; margin-left: 0.5rem;">
+                        <i class="fab fa-whatsapp"></i> Share on WhatsApp
+                    </button>
+                </div>
+            `;
+            
+            updateFlipCard(data.referral_code);
+        }
+        
+        async function loadReferralStats(code) {
+            try {
+                const response = await fetch(`/api/referrals.php?action=get&code=${code}`);
+                const data = await response.json();
+                
+                if (data.success && data.stats) {
+                    const totalRewards = data.stats.total_rewards || 0;
+                    document.getElementById('cardReward').textContent = `KSH ${totalRewards}`;
+                }
+            } catch (error) {
+                console.log('Error loading stats:', error);
             }
         }
         
@@ -2445,6 +2567,7 @@ $stats = $statsResult->fetch_assoc();
             document.getElementById('displayCode').textContent = code;
             document.getElementById('displayLink').textContent = `${window.location.origin}?ref=${code}`;
             document.getElementById('cvvCode').textContent = code;
+            document.getElementById('shareLinkCode').textContent = `${window.location.origin}?ref=${code}`;
         }
         
         function copyReferralLink(code) {
@@ -2456,6 +2579,42 @@ $stats = $statsResult->fetch_assoc();
             });
         }
         
+        function shareViaWhatsApp(code) {
+            const link = `${window.location.origin}?ref=${code}`;
+            const msg = encodeURIComponent(`Hey! Use my referral code ${code} to get a discount on phone repair at Erick Phone Repair in Nairobi CBD!\n\nJoin using this link: ${link}`);
+            window.open(`https://wa.me/?text=${msg}`, '_blank');
+        }
+        
+        // Check for referral code in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const refCode = urlParams.get('ref');
+        
+        if (refCode) {
+            invitedBy = refCode;
+            localStorage.setItem('referral_code', refCode);
+            sessionStorage.setItem('referral_code', refCode);
+            
+            // Show invite message
+            const inviteMsg = document.getElementById('referralInviteMessage');
+            inviteMsg.style.display = 'block';
+            document.getElementById('inviteMessageText').textContent = 
+                `You've been invited by ${refCode}! Sign up to earn KSH <?php echo $settings['weekly_reward'] ?? 200; ?> on your first repair.`;
+            
+            // Update flip card preview
+            updateFlipCard(refCode);
+            
+            // Track referral visit
+            fetch('/api/analytics.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    action: 'track_referral',
+                    referrer_code: refCode,
+                    page: window.location.pathname + window.location.search
+                })
+            }).catch(() => {});
+        }
+        
         // Mobile Menu
         const navToggle = document.getElementById('navToggle');
         const navMenu = document.getElementById('navMenu');
@@ -2465,7 +2624,6 @@ $stats = $statsResult->fetch_assoc();
             navMenu.classList.toggle('active');
         });
         
-        // Close menu on link click
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', () => {
                 navToggle.classList.remove('active');
@@ -2479,14 +2637,6 @@ $stats = $statsResult->fetch_assoc();
             navbar.classList.toggle('scrolled', window.scrollY > 50);
         });
         
-        // Referral from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const refCode = urlParams.get('ref');
-        if (refCode) {
-            localStorage.setItem('referral_code', refCode);
-            updateFlipCard(refCode);
-        }
-        
         // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
@@ -2498,18 +2648,11 @@ $stats = $statsResult->fetch_assoc();
             });
         });
         
-        // Handle image fallbacks
+        // Image fallbacks
         document.querySelectorAll('img').forEach(img => {
             img.addEventListener('error', function() {
                 if (this.classList.contains('hero-img')) {
                     this.src = 'https://placehold.co/600x600/10b981/white?text=Erick+Repair';
-                } else if (this.classList.contains('logo-img')) {
-                    this.style.display = 'none';
-                    const icon = document.createElement('i');
-                    icon.className = 'fas fa-tools';
-                    icon.style.fontSize = '20px';
-                    icon.style.color = '#10b981';
-                    this.parentNode.insertBefore(icon, this);
                 }
             });
         });
